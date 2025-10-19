@@ -582,8 +582,12 @@
         messages = messages.map(msg => ({
             ...msg,
             reactions: msg.reactions || { fire: 0, skull: 0, heart: 0 },
-            id: msg.id || Date.now() + Math.random()
+            id: msg.id || Date.now() + Math.random(),
+            userId: msg.userId || 'demo_user_' + Math.random().toString(36).substr(2, 9)
         }));
+        
+        // Save updated messages back
+        localStorage.setItem('apocalypseMessages', JSON.stringify(messages));
         
         // Initialize user session
         function initUser() {
@@ -597,22 +601,31 @@
         // Sample starter messages
         const starterMessages = [
             {
+                id: 'starter_1',
                 author: "Anonymous Coder",
                 type: "code",
                 content: "function saveWorld() {\n  return hope * courage;\n}\n// Last commit before the end",
-                timestamp: Date.now() - 3600000
+                timestamp: Date.now() - 3600000,
+                reactions: { fire: 5, skull: 2, heart: 8 },
+                userId: 'demo_user_1'
             },
             {
+                id: 'starter_2',
                 author: "Digital Philosopher",
                 type: "wisdom",
                 content: "The internet taught me that we're all connected, but also that we should've spent less time arguing in comment sections.",
-                timestamp: Date.now() - 7200000
+                timestamp: Date.now() - 7200000,
+                reactions: { fire: 12, skull: 1, heart: 15 },
+                userId: 'demo_user_2'
             },
             {
+                id: 'starter_3',
                 author: "Meme Lord",
                 type: "meme",
                 content: "*This is fine dog meme* but the house is the entire internet",
-                timestamp: Date.now() - 1800000
+                timestamp: Date.now() - 1800000,
+                reactions: { fire: 20, skull: 5, heart: 3 },
+                userId: 'demo_user_3'
             }
         ];
 
@@ -1047,11 +1060,26 @@
         function addReaction(msgId, type) {
             const message = messages.find(m => m.id == msgId);
             if (message) {
-                message.reactions = message.reactions || { fire: 0, skull: 0, heart: 0 };
+                // Initialize reactions if not present
+                if (!message.reactions) {
+                    message.reactions = { fire: 0, skull: 0, heart: 0 };
+                }
+                
+                // Increment reaction count
                 message.reactions[type] = (message.reactions[type] || 0) + 1;
+                
+                // Save to localStorage
                 localStorage.setItem('apocalypseMessages', JSON.stringify(messages));
+                
+                // Update display
                 displayMessages();
+                updateStats();
+                
+                // Sound feedback
                 if (soundEnabled) playSound('toggle');
+                
+                // Visual feedback
+                showError(`${type === 'fire' ? '🔥' : type === 'skull' ? '💀' : '❤️'} REACTION ADDED!`);
             }
         }
 
