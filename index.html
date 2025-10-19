@@ -181,6 +181,181 @@
             margin-top: 15px;
         }
 
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .message-actions button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .message-actions button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .reaction-count {
+            display: inline-block;
+            margin-left: 5px;
+            color: #ffff00;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-family: 'VT323', monospace;
+            font-size: 1.2em;
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            justify-content: center;
+        }
+
+        .sort-btn {
+            background: rgba(255, 255, 0, 0.2);
+            color: #ffff00;
+            border: 2px solid #ffff00;
+            padding: 8px 15px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .sort-btn.active {
+            background: #ffff00;
+            color: #000;
+        }
+
+        .message-card .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff0000;
+            border: none;
+            color: #fff;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .message-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .apocalypse-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: pulse 1s infinite;
+        }
+
+        .apocalypse-mode.active {
+            display: flex;
+        }
+
+        .apocalypse-content {
+            text-align: center;
+            color: #fff;
+            font-size: 3em;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(255, 255, 0, 0.2);
+            border: 2px solid #ffff00;
+            color: #ffff00;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1.2em;
+            z-index: 100;
+        }
+
+        body.light-mode {
+            background: linear-gradient(45deg, #ffffff, #ffeeee, #ffdddd);
+            color: #000;
+        }
+
+        body.light-mode .container {
+            color: #000;
+        }
+
+        body.light-mode header {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        body.light-mode h1 {
+            color: #cc0000;
+        }
+
+        .view-mode {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .view-btn {
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            padding: 8px 15px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .view-btn.active {
+            background: #00ffff;
+            color: #000;
+        }
+
+        .messages-list {
+            display: none;
+        }
+
+        .messages-list.active {
+            display: block;
+        }
+
+        .message-item {
+            background: rgba(0, 0, 0, 0.8);
+            border-left: 4px solid #00ff00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
         .stats {
             display: flex;
             justify-content: space-around;
@@ -324,8 +499,16 @@
 </head>
 <body>
     <button class="sound-toggle" onclick="toggleSound()">🔊 SOUND: OFF</button>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 DARK MODE</button>
     
     <div class="particles" id="particles"></div>
+    
+    <div class="apocalypse-mode" id="apocalypseMode">
+        <div class="apocalypse-content">
+            <h1>🔥 THE END IS HERE 🔥</h1>
+            <p id="apocalypseMessage">INITIATING FINAL PROTOCOL...</p>
+        </div>
+    </div>
     
     <div class="container">
         <header class="glitch">
@@ -379,6 +562,15 @@
             </p>
         </div>
 
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search messages..." onkeyup="searchMessages()">
+
+        <div class="sort-buttons">
+            <button class="sort-btn active" onclick="sortMessages('newest')">⏰ NEWEST</button>
+            <button class="sort-btn" onclick="sortMessages('oldest')">📅 OLDEST</button>
+            <button class="sort-btn" onclick="sortMessages('author')">👤 BY AUTHOR</button>
+            <button class="sort-btn" onclick="sortMessages('popular')">🔥 POPULAR</button>
+        </div>
+
         <div class="filter-buttons">
             <button class="filter-btn active" onclick="filterMessages('all')">ALL</button>
             <button class="filter-btn" onclick="filterMessages('confession')">💔 CONFESSIONS</button>
@@ -388,7 +580,13 @@
             <button class="filter-btn" onclick="filterMessages('code')">💻 CODE</button>
         </div>
 
-        <div class="messages-grid" id="messagesGrid"></div>
+        <div class="view-mode">
+            <button class="view-btn active" onclick="switchView('grid')">📱 GRID VIEW</button>
+            <button class="view-btn" onclick="switchView('list')">📋 LIST VIEW</button>
+        </div>
+
+        <div class="messages-grid active" id="messagesGrid"></div>
+        <div class="messages-list" id="messagesList"></div>
         
         <div class="easter-egg" onclick="konami()" title="Try the Konami Code: ↑↑↓↓←→←→BA">
             💀 ???
@@ -405,7 +603,17 @@
         let currentFilter = 'all';
         let soundEnabled = false;
         let konamiCode = [];
+        let currentSort = 'newest';
+        let currentView = 'grid';
+        let searchQuery = '';
         const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        
+        // Initialize reactions in messages
+        messages = messages.map(msg => ({
+            ...msg,
+            reactions: msg.reactions || { fire: 0, skull: 0, heart: 0 },
+            id: msg.id || Date.now() + Math.random()
+        }));
         
         // Sample starter messages
         const starterMessages = [
@@ -474,10 +682,12 @@
             }
 
             const message = {
+                id: Date.now() + Math.random(),
                 author,
                 type,
                 content,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                reactions: { fire: 0, skull: 0, heart: 0 }
             };
 
             messages.unshift(message);
@@ -499,29 +709,66 @@
         // Display messages
         function displayMessages() {
             const grid = document.getElementById('messagesGrid');
-            const filtered = currentFilter === 'all' 
+            const list = document.getElementById('messagesList');
+            
+            let filtered = currentFilter === 'all' 
                 ? messages 
                 : messages.filter(m => m.type === currentFilter);
 
-            grid.innerHTML = filtered.map(msg => {
-                const typeLabels = {
-                    confession: '💔 CONFESSION',
-                    regret: '😭 REGRET',
-                    wisdom: '🧠 WISDOM',
-                    meme: '😂 MEME',
-                    code: '💻 CODE'
-                };
+            // Search filter
+            if (searchQuery) {
+                filtered = filtered.filter(m => 
+                    m.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    m.author.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
 
+            // Sort
+            filtered = sortMessagesList(filtered);
+
+            const typeLabels = {
+                confession: '💔 CONFESSION',
+                regret: '😭 REGRET',
+                wisdom: '🧠 WISDOM',
+                meme: '😂 MEME',
+                code: '💻 CODE'
+            };
+
+            // Grid view
+            grid.innerHTML = filtered.map(msg => {
                 const timeAgo = getTimeAgo(msg.timestamp);
                 const formattedContent = msg.type === 'code' 
                     ? `<code>${escapeHtml(msg.content)}</code>`
                     : escapeHtml(msg.content);
+                
+                const totalReactions = (msg.reactions?.fire || 0) + (msg.reactions?.skull || 0) + (msg.reactions?.heart || 0);
 
                 return `
                     <div class="message-card ${msg.type}">
+                        <button class="delete-btn" onclick="deleteMessage('${msg.id}')">×</button>
                         <span class="message-type">${typeLabels[msg.type]}</span>
                         <div class="message-content">${formattedContent}</div>
                         <div class="message-author">— ${escapeHtml(msg.author)} | ${timeAgo}</div>
+                        <div class="message-actions">
+                            <button onclick="addReaction('${msg.id}', 'fire')">🔥 <span class="reaction-count">${msg.reactions?.fire || 0}</span></button>
+                            <button onclick="addReaction('${msg.id}', 'skull')">💀 <span class="reaction-count">${msg.reactions?.skull || 0}</span></button>
+                            <button onclick="addReaction('${msg.id}', 'heart')">❤️ <span class="reaction-count">${msg.reactions?.heart || 0}</span></button>
+                            <button onclick="copyMessage('${msg.id}')">📋 Copy</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // List view
+            list.innerHTML = filtered.map(msg => {
+                const timeAgo = getTimeAgo(msg.timestamp);
+                const preview = msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : '');
+                
+                return `
+                    <div class="message-item ${msg.type}">
+                        <strong>${typeLabels[msg.type]}</strong> by ${escapeHtml(msg.author)}
+                        <p>${escapeHtml(preview)}</p>
+                        <small>${timeAgo} | 🔥 ${msg.reactions?.fire || 0} 💀 ${msg.reactions?.skull || 0} ❤️ ${msg.reactions?.heart || 0}</small>
                     </div>
                 `;
             }).join('');
@@ -753,6 +1000,152 @@
 
         // Initialize effects
         createParticles();
+
+        // Search messages
+        function searchMessages() {
+            searchQuery = document.getElementById('searchBox').value;
+            displayMessages();
+        }
+
+        // Sort messages
+        function sortMessages(type) {
+            currentSort = type;
+            
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayMessages();
+        }
+
+        function sortMessagesList(msgs) {
+            const sorted = [...msgs];
+            
+            switch(currentSort) {
+                case 'newest':
+                    return sorted.sort((a, b) => b.timestamp - a.timestamp);
+                case 'oldest':
+                    return sorted.sort((a, b) => a.timestamp - b.timestamp);
+                case 'author':
+                    return sorted.sort((a, b) => a.author.localeCompare(b.author));
+                case 'popular':
+                    return sorted.sort((a, b) => {
+                        const aTotal = (a.reactions?.fire || 0) + (a.reactions?.skull || 0) + (a.reactions?.heart || 0);
+                        const bTotal = (b.reactions?.fire || 0) + (b.reactions?.skull || 0) + (b.reactions?.heart || 0);
+                        return bTotal - aTotal;
+                    });
+                default:
+                    return sorted;
+            }
+        }
+
+        // Switch view
+        function switchView(view) {
+            currentView = view;
+            
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const grid = document.getElementById('messagesGrid');
+            const list = document.getElementById('messagesList');
+            
+            if (view === 'grid') {
+                grid.classList.add('active');
+                list.classList.remove('active');
+            } else {
+                grid.classList.remove('active');
+                list.classList.add('active');
+            }
+        }
+
+        // Add reaction
+        function addReaction(msgId, type) {
+            const message = messages.find(m => m.id == msgId);
+            if (message) {
+                message.reactions = message.reactions || { fire: 0, skull: 0, heart: 0 };
+                message.reactions[type] = (message.reactions[type] || 0) + 1;
+                localStorage.setItem('apocalypseMessages', JSON.stringify(messages));
+                displayMessages();
+                if (soundEnabled) playSound('toggle');
+            }
+        }
+
+        // Delete message
+        function deleteMessage(msgId) {
+            if (confirm('Delete this message?')) {
+                messages = messages.filter(m => m.id != msgId);
+                localStorage.setItem('apocalypseMessages', JSON.stringify(messages));
+                displayMessages();
+                updateStats();
+                showError('🗑️ MESSAGE DELETED');
+            }
+        }
+
+        // Copy message
+        function copyMessage(msgId) {
+            const message = messages.find(m => m.id == msgId);
+            if (message) {
+                const text = `"${message.content}" - ${message.author}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    showError('📋 MESSAGE COPIED!');
+                }).catch(() => {
+                    showError('❌ COPY FAILED');
+                });
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const btn = document.querySelector('.theme-toggle');
+            const isLight = document.body.classList.contains('light-mode');
+            btn.textContent = isLight ? '☀️ LIGHT MODE' : '🌙 DARK MODE';
+        }
+
+        // Check countdown and trigger apocalypse
+        function checkApocalypse() {
+            const endDate = new Date();
+            endDate.setHours(23, 59, 59, 999);
+            const now = new Date();
+            const diff = endDate - now;
+            
+            if (diff <= 60000 && diff > 0) { // Last minute
+                triggerApocalypse();
+            }
+        }
+
+        function triggerApocalypse() {
+            const modal = document.getElementById('apocalypseMode');
+            const message = document.getElementById('apocalypseMessage');
+            
+            modal.classList.add('active');
+            
+            const messages = [
+                'SYSTEMS FAILING...',
+                'FINAL MESSAGES BEING SAVED...',
+                'GOODBYE, INTERNET...',
+                'THIS IS THE END...',
+                'OR IS IT A NEW BEGINNING?'
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                message.textContent = messages[i];
+                i++;
+                if (i >= messages.length) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        modal.classList.remove('active');
+                    }, 3000);
+                }
+            }, 2000);
+        }
+
+        // Check every minute
+        setInterval(checkApocalypse, 60000);
     </script>
 </body>
 </html>
