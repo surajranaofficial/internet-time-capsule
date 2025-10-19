@@ -575,6 +575,7 @@
         let currentSort = 'newest';
         let currentView = 'grid';
         let searchQuery = '';
+        let currentUser = localStorage.getItem('apocalypseUser') || null;
         const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         
         // Initialize reactions in messages
@@ -583,6 +584,15 @@
             reactions: msg.reactions || { fire: 0, skull: 0, heart: 0 },
             id: msg.id || Date.now() + Math.random()
         }));
+        
+        // Initialize user session
+        function initUser() {
+            if (!currentUser) {
+                currentUser = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('apocalypseUser', currentUser);
+            }
+        }
+        initUser();
         
         // Sample starter messages
         const starterMessages = [
@@ -656,7 +666,8 @@
                 type,
                 content,
                 timestamp: Date.now(),
-                reactions: { fire: 0, skull: 0, heart: 0 }
+                reactions: { fire: 0, skull: 0, heart: 0 },
+                userId: currentUser
             };
 
             messages.unshift(message);
@@ -711,10 +722,12 @@
                     : escapeHtml(msg.content);
                 
                 const totalReactions = (msg.reactions?.fire || 0) + (msg.reactions?.skull || 0) + (msg.reactions?.heart || 0);
+                const canDelete = msg.userId === currentUser;
+                const deleteBtn = canDelete ? `<button class="delete-btn" onclick="deleteMessage('${msg.id}')">×</button>` : '';
 
                 return `
                     <div class="message-card ${msg.type}">
-                        <button class="delete-btn" onclick="deleteMessage('${msg.id}')">×</button>
+                        ${deleteBtn}
                         <span class="message-type">${typeLabels[msg.type]}</span>
                         <div class="message-content">${formattedContent}</div>
                         <div class="message-author">— ${escapeHtml(msg.author)} | ${timeAgo}</div>
@@ -1044,12 +1057,26 @@
 
         // Delete message
         function deleteMessage(msgId) {
-            if (confirm('Delete this message?')) {
+            const message = messages.find(m => m.id == msgId);
+            
+            // Security check: only allow user to delete their own messages
+            if (!message) {
+                showError('❌ MESSAGE NOT FOUND');
+                return;
+            }
+            
+            if (message.userId !== currentUser) {
+                showError('🚫 YOU CAN ONLY DELETE YOUR OWN MESSAGES!');
+                return;
+            }
+            
+            if (confirm('Delete this message? This cannot be undone!')) {
                 messages = messages.filter(m => m.id != msgId);
                 localStorage.setItem('apocalypseMessages', JSON.stringify(messages));
                 displayMessages();
                 updateStats();
                 showError('🗑️ MESSAGE DELETED');
+                if (soundEnabled) playSound('error');
             }
         }
 
