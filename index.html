@@ -132,13 +132,23 @@
         }
 
         .messages-grid {
-            display: grid;
+            display: none;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 30px;
         }
 
-        .message-card {
+        .messages-grid.active {
+            display: grid;
+        }
+
+        .messages-list {
+            display: none;
+        }
+
+        .messages-list.active {
+            display: block;
+        }
             background: rgba(0, 0, 0, 0.8);
             border: 2px solid;
             padding: 20px;
@@ -325,6 +335,8 @@
             margin: 10px 0;
             border-radius: 5px;
         }
+
+        .message-card {
 
         .stats {
             display: flex;
