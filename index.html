@@ -523,7 +523,6 @@
             <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                 <button onclick="exportMessages()" style="background: #00cc00; font-size: 1.2em; padding: 10px 20px;">💾 EXPORT MESSAGES</button>
                 <button onclick="shareApp()" style="background: #0099ff; font-size: 1.2em; padding: 10px 20px;">📤 SHARE APP</button>
-                <button onclick="burnEverything()" style="background: #990000; font-size: 1.2em; padding: 10px 20px;">🔥 BURN ALL</button>
             </div>
             
             <p style="color: #888; font-size: 1em; margin-top: 15px; text-align: center;">
@@ -864,18 +863,7 @@
             showError('📦 MESSAGES EXPORTED!');
         }
 
-        // Clear all messages (apocalypse button!)
-        function burnEverything() {
-            if (confirm('🔥 BURN ALL MESSAGES? THIS CANNOT BE UNDONE! 🔥')) {
-                if (confirm('ARE YOU ABSOLUTELY SURE? THE APOCALYPSE IS FINAL!')) {
-                    messages = [];
-                    localStorage.removeItem('apocalypseMessages');
-                    displayMessages();
-                    updateStats();
-                    showError('🔥 EVERYTHING BURNED TO ASHES 🔥');
-                }
-            }
-        }
+
 
         // Share message to clipboard
         function shareApp() {
