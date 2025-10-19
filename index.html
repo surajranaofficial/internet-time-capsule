@@ -287,37 +287,7 @@
             50% { opacity: 1; }
         }
 
-        .theme-toggle {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: rgba(255, 255, 0, 0.2);
-            border: 2px solid #ffff00;
-            color: #ffff00;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: 'VT323', monospace;
-            font-size: 1.2em;
-            z-index: 100;
-        }
 
-        body.light-mode {
-            background: linear-gradient(45deg, #ffffff, #ffeeee, #ffdddd);
-            color: #000;
-        }
-
-        body.light-mode .container {
-            color: #000;
-        }
-
-        body.light-mode header {
-            border-color: #ff0000;
-            background: rgba(255, 0, 0, 0.1);
-        }
-
-        body.light-mode h1 {
-            color: #cc0000;
-        }
 
         .view-mode {
             display: flex;
@@ -499,7 +469,6 @@
 </head>
 <body>
     <button class="sound-toggle" onclick="toggleSound()">🔊 SOUND: OFF</button>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙 DARK MODE</button>
     
     <div class="particles" id="particles"></div>
     
@@ -1097,13 +1066,7 @@
             }
         }
 
-        // Theme toggle
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const btn = document.querySelector('.theme-toggle');
-            const isLight = document.body.classList.contains('light-mode');
-            btn.textContent = isLight ? '☀️ LIGHT MODE' : '🌙 DARK MODE';
-        }
+
 
         // Check countdown and trigger apocalypse
         function checkApocalypse() {
