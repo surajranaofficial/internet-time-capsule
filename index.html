@@ -248,6 +248,71 @@
             z-index: 1000;
             font-size: 1.5em;
             box-shadow: 0 0 50px #ff0000;
+            animation: popupPulse 0.5s ease;
+        }
+
+        @keyframes popupPulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1.2em;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .sound-toggle:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: #ff0000;
+            width: 2px;
+            height: 2px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .easter-egg {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .easter-egg:hover {
+            color: #ff0000;
         }
 
         @media (max-width: 768px) {
@@ -258,6 +323,10 @@
     </style>
 </head>
 <body>
+    <button class="sound-toggle" onclick="toggleSound()">🔊 SOUND: OFF</button>
+    
+    <div class="particles" id="particles"></div>
+    
     <div class="container">
         <header class="glitch">
             <h1>🔥 INTERNET TIME CAPSULE 🔥</h1>
@@ -298,6 +367,16 @@
             
             <button onclick="saveMessage()">🚀 SEND TO TIME CAPSULE</button>
             <button onclick="randomApocalypseQuote()" style="background: #6600ff;">🎲 NEED INSPIRATION?</button>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="exportMessages()" style="background: #00cc00; font-size: 1.2em; padding: 10px 20px;">💾 EXPORT MESSAGES</button>
+                <button onclick="shareApp()" style="background: #0099ff; font-size: 1.2em; padding: 10px 20px;">📤 SHARE APP</button>
+                <button onclick="burnEverything()" style="background: #990000; font-size: 1.2em; padding: 10px 20px;">🔥 BURN ALL</button>
+            </div>
+            
+            <p style="color: #888; font-size: 1em; margin-top: 15px; text-align: center;">
+                💡 Keyboard shortcuts: Ctrl/Cmd+Enter to submit, Ctrl/Cmd+E to export
+            </p>
         </div>
 
         <div class="filter-buttons">
@@ -310,6 +389,10 @@
         </div>
 
         <div class="messages-grid" id="messagesGrid"></div>
+        
+        <div class="easter-egg" onclick="konami()" title="Try the Konami Code: ↑↑↓↓←→←→BA">
+            💀 ???
+        </div>
     </div>
 
     <div class="error-popup" id="errorPopup">
@@ -320,6 +403,9 @@
         // Initialize
         let messages = JSON.parse(localStorage.getItem('apocalypseMessages')) || [];
         let currentFilter = 'all';
+        let soundEnabled = false;
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         
         // Sample starter messages
         const starterMessages = [
@@ -522,6 +608,151 @@
                 }, 100);
             }
         }, 3000);
+
+        // Export messages feature
+        function exportMessages() {
+            const dataStr = JSON.stringify(messages, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `apocalypse-messages-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showError('📦 MESSAGES EXPORTED!');
+        }
+
+        // Clear all messages (apocalypse button!)
+        function burnEverything() {
+            if (confirm('🔥 BURN ALL MESSAGES? THIS CANNOT BE UNDONE! 🔥')) {
+                if (confirm('ARE YOU ABSOLUTELY SURE? THE APOCALYPSE IS FINAL!')) {
+                    messages = [];
+                    localStorage.removeItem('apocalypseMessages');
+                    displayMessages();
+                    updateStats();
+                    showError('🔥 EVERYTHING BURNED TO ASHES 🔥');
+                }
+            }
+        }
+
+        // Share message to clipboard
+        function shareApp() {
+            const text = `🔥 Internet Time Capsule - What would you say if the internet was ending tomorrow?\n\nLeave your final message: ${window.location.href}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showError('📋 LINK COPIED! SPREAD THE WORD!');
+            }).catch(() => {
+                showError('❌ COPY FAILED - MANUAL SHARE REQUIRED');
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Enter to submit
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                saveMessage();
+            }
+            // Ctrl/Cmd + E to export
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                exportMessages();
+            }
+            
+            // Konami code detector
+            konamiCode.push(e.key);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                activateKonami();
+                konamiCode = [];
+            }
+        });
+
+        // Sound system
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.querySelector('.sound-toggle');
+            btn.textContent = soundEnabled ? '🔊 SOUND: ON' : '🔊 SOUND: OFF';
+            if (soundEnabled) playSound('toggle');
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const sounds = {
+                toggle: { freq: 800, duration: 0.1 },
+                submit: { freq: 600, duration: 0.15 },
+                error: { freq: 200, duration: 0.2 },
+                apocalypse: { freq: 100, duration: 0.5 }
+            };
+            
+            const sound = sounds[type] || sounds.toggle;
+            oscillator.frequency.value = sound.freq;
+            gainNode.gain.value = 0.1;
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + sound.duration);
+        }
+
+        // Particle system
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.3;
+                container.appendChild(particle);
+            }
+        }
+
+        // Konami code easter egg
+        function konami() {
+            showError('💀 TRY: ↑↑↓↓←→←→BA');
+        }
+
+        function activateKonami() {
+            document.body.style.animation = 'apocalypseGradient 1s ease infinite';
+            showError('🎮 KONAMI CODE ACTIVATED! CHAOS MODE!');
+            playSound('apocalypse');
+            
+            // Extra chaotic effects
+            let chaosInterval = setInterval(() => {
+                if (Math.random() > 0.7) {
+                    document.body.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+                    setTimeout(() => {
+                        document.body.style.filter = 'none';
+                    }, 100);
+                }
+            }, 500);
+            
+            setTimeout(() => {
+                clearInterval(chaosInterval);
+                document.body.style.filter = 'none';
+                showError('🎮 CHAOS MODE DEACTIVATED');
+            }, 10000);
+        }
+
+        // Enhanced save message with sound
+        const originalSaveMessage = saveMessage;
+        saveMessage = function() {
+            originalSaveMessage();
+            if (soundEnabled) playSound('submit');
+        };
+
+        // Initialize effects
+        createParticles();
     </script>
 </body>
 </html>
