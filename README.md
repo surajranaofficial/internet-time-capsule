@@ -24,6 +24,9 @@ All stored in a glitchy, retro-terminal aesthetic that screams "THE END IS NEAR!
 - **Filter System**: Browse by message type
 - **Stats Dashboard**: Track total messages, survivors, and time remaining
 - **Anonymous Support**: Post anonymously or with your name
+- **Export Messages**: Download your apocalypse archive as JSON
+- **Share Feature**: Spread the word before it's too late
+- **Burn All Button**: Nuclear option - delete everything (with confirmation!)
 
 ### The Cursed Parts (Features That Shouldn't Work But Do)
 - Random glitch effects that invert colors
@@ -32,6 +35,10 @@ All stored in a glitchy, retro-terminal aesthetic that screams "THE END IS NEAR!
 - Retro terminal font (VT323)
 - Chaotic animations and shadows
 - "Need Inspiration?" button for apocalypse quotes
+- **Sound Effects**: Retro beeps and boops (toggle on/off)
+- **Particle System**: Falling red pixels of doom
+- **Konami Code Easter Egg**: ↑↑↓↓←→←→BA for chaos mode
+- **Keyboard Shortcuts**: Ctrl/Cmd+Enter to submit, Ctrl/Cmd+E to export
 
 ## 🎨 Design Philosophy
 

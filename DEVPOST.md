@@ -22,6 +22,11 @@ All displayed in a glitchy, terminal-green aesthetic with:
 - Message filtering by type
 - Stats tracking (survivors, messages, time left)
 - LocalStorage persistence (your messages outlive the session)
+- **Export/Share/Burn features** for maximum chaos
+- **Sound effects** (toggle on/off)
+- **Particle effects** (falling red pixels)
+- **Konami code easter egg** (↑↑↓↓←→←→BA)
+- **Keyboard shortcuts** for power users
 
 ## How we built it
 **Pure vanilla chaos:**
@@ -46,6 +51,11 @@ No build process. No dependencies. Just open and run. Like it's 1999 but cursed.
 - ✅ The random glitch effect that scared me the first time it triggered
 - ✅ Messages persist across sessions (LocalStorage FTW)
 - ✅ Terminal aesthetic that screams "I'm in danger"
+- ✅ **Web Audio API for retro sound effects**
+- ✅ **Particle system using pure CSS**
+- ✅ **Konami code easter egg that triggers chaos mode**
+- ✅ **Export/Share features for viral potential**
+- ✅ **Keyboard shortcuts that actually make sense**
 
 ## What we learned
 - CSS animations can be both beautiful and disturbing
@@ -54,17 +64,23 @@ No build process. No dependencies. Just open and run. Like it's 1999 but cursed.
 - Constraints breed creativity (no frameworks = pure creativity)
 - The best features are the ones that feel broken but aren't
 - Apocalypse-themed UIs hit different at 3 AM
+- **Web Audio API can make retro sounds with just oscillators**
+- **CSS particles are cheaper than canvas**
+- **Easter eggs make everything better**
+- **Keyboard shortcuts improve UX by 10x**
 
 ## What's next for Internet Time Capsule
 If humanity survives:
-- 🔊 Add dial-up modem sounds
+- ~~🔊 Add dial-up modem sounds~~ ✅ **DONE - Retro beep sounds added!**
 - 🌐 Backend + real-time sharing (MongoDB + WebSockets?)
 - 💀 Messages actually expire after countdown
-- 🔥 "Burn everything" button for dramatic exits
-- 🎨 More glitch effects (hue rotation, screen tears)
+- ~~🔥 "Burn everything" button for dramatic exits~~ ✅ **DONE!**
+- 🎨 More glitch effects (screen tears, VHS distortion)
 - 🤖 AI-generated apocalypse responses
-- 📱 Mobile app version
+- 📱 Mobile app version (React Native?)
 - 🌍 Global message map
+- 🎵 Full retro soundtrack
+- 🏆 Leaderboard for most apocalyptic messages
 
 But honestly? It's perfect as is. Simple. Chaotic. Functional. 
 
